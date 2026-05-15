@@ -97,6 +97,14 @@ function setTooltip(selection) {
   );
 }
 
+function tooltipHtml(station) {
+  return `
+    <strong>${station.name}</strong>
+    ${station.totalTraffic} trips
+    (${station.departures} departures, ${station.arrivals} arrivals)
+  `;
+}
+
 function departureRatio(station) {
   return station.totalTraffic ? station.departures / station.totalTraffic : 0.5;
 }
@@ -177,7 +185,9 @@ async function initialize() {
       let stations = computeStationTraffic(baseStations);
       console.log("Stations Array:", stations);
 
+      const mapContainer = document.getElementById("map");
       const svg = d3.select("#map").select("svg");
+      const stationTooltip = d3.select("#station-tooltip");
       const radiusScale = d3
         .scaleSqrt()
         .domain([0, d3.max(stations, (d) => d.totalTraffic)])
@@ -190,6 +200,17 @@ async function initialize() {
         .append("circle")
         .attr("r", (d) => radiusScale(d.totalTraffic))
         .style("--departure-ratio", (d) => stationFlow(departureRatio(d)))
+        .on("pointerenter mouseenter", (event, d) => {
+          stationTooltip.html(tooltipHtml(d)).attr("hidden", null);
+        })
+        .on("pointermove mousemove", (event) => {
+          stationTooltip
+            .style("left", `${event.offsetX}px`)
+            .style("top", `${event.offsetY}px`);
+        })
+        .on("pointerleave mouseleave", () => {
+          stationTooltip.attr("hidden", true);
+        })
         .call(setTooltip);
 
       function updatePositions() {
@@ -212,6 +233,42 @@ async function initialize() {
 
         stations = filteredStations;
         updatePositions();
+      }
+
+      function updateStationTooltip(event) {
+        const { left, top } = mapContainer.getBoundingClientRect();
+        const pointer = {
+          x: event.clientX - left,
+          y: event.clientY - top,
+        };
+
+        let closestStation;
+        let closestDistance = Infinity;
+
+        for (const station of stations) {
+          const coords = getCoords(station);
+          const distance = Math.hypot(
+            pointer.x - coords.cx,
+            pointer.y - coords.cy,
+          );
+          const hitRadius = Math.max(radiusScale(station.totalTraffic) + 4, 8);
+
+          if (distance <= hitRadius && distance < closestDistance) {
+            closestStation = station;
+            closestDistance = distance;
+          }
+        }
+
+        if (!closestStation) {
+          stationTooltip.attr("hidden", true);
+          return;
+        }
+
+        stationTooltip
+          .html(tooltipHtml(closestStation))
+          .style("left", `${pointer.x}px`)
+          .style("top", `${pointer.y}px`)
+          .attr("hidden", null);
       }
 
       const timeSlider = document.getElementById("time-slider");
@@ -240,6 +297,10 @@ async function initialize() {
       map.on("resize", updatePositions);
       map.on("moveend", updatePositions);
       timeSlider.addEventListener("input", updateTimeDisplay);
+      mapContainer.addEventListener("mousemove", updateStationTooltip);
+      mapContainer.addEventListener("mouseleave", () => {
+        stationTooltip.attr("hidden", true);
+      });
 
       loadingMessage.hidden = true;
       console.log("Trips loaded:", departuresByMinute.flat().length);
