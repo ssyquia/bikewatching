@@ -251,7 +251,7 @@ async function initialize() {
             pointer.x - coords.cx,
             pointer.y - coords.cy,
           );
-          const hitRadius = Math.max(radiusScale(station.totalTraffic) + 4, 8);
+          const hitRadius = Math.max(radiusScale(station.totalTraffic) + 6, 18);
 
           if (distance <= hitRadius && distance < closestDistance) {
             closestStation = station;
