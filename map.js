@@ -191,7 +191,7 @@ async function initialize() {
       const radiusScale = d3
         .scaleSqrt()
         .domain([0, d3.max(stations, (d) => d.totalTraffic)])
-        .range([0, 25]);
+        .range([1, 10]);
 
       const circles = svg
         .selectAll("circle")
@@ -223,7 +223,7 @@ async function initialize() {
         const filteredStations = computeStationTraffic(baseStations, timeFilter);
         radiusScale
           .domain([0, d3.max(filteredStations, (d) => d.totalTraffic)])
-          .range(timeFilter === -1 ? [0, 25] : [3, 50]);
+          .range(timeFilter === -1 ? [1, 10] : [2, 16]);
 
         circles
           .data(filteredStations, (d) => d.short_name)
@@ -251,7 +251,7 @@ async function initialize() {
             pointer.x - coords.cx,
             pointer.y - coords.cy,
           );
-          const hitRadius = Math.max(radiusScale(station.totalTraffic) + 6, 18);
+          const hitRadius = Math.max(radiusScale(station.totalTraffic) + 8, 18);
 
           if (distance <= hitRadius && distance < closestDistance) {
             closestStation = station;
