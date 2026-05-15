@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bikewatching</title>
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="global.css?v=3" />
-    <link rel="stylesheet" href="map.css?v=3" />
+    <link rel="stylesheet" href="global.css?v=4" />
+    <link rel="stylesheet" href="map.css?v=4" />
     <link
       href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
       rel="stylesheet"
     />
     <script src="config.js"></script>
-    <script src="map.js?v=3" type="module"></script>
+    <script src="map.js?v=4" type="module"></script>
   </head>
   <body>
     <header>
@@ -35,7 +35,6 @@
     <main>
       <div id="map" aria-label="Interactive map of Boston bike traffic">
         <svg aria-hidden="true"></svg>
-        <div id="station-tooltip" role="status" hidden></div>
         <div id="token-message" hidden>
           Add your Mapbox public token in <code>config.js</code>, or run
           <code>localStorage.setItem('mapboxToken', 'pk...')</code> in the
