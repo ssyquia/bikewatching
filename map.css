@@ -1,0 +1,90 @@
+#map {
+  position: relative;
+  width: 100%;
+  min-height: 34rem;
+  flex: 1;
+  overflow: hidden;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgb(20 35 45 / 14%);
+}
+
+#map svg {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+#map circle,
+.legend > div {
+  --color-departures: steelblue;
+  --color-arrivals: darkorange;
+  --color: color-mix(
+    in oklch,
+    var(--color-departures) calc(100% * var(--departure-ratio)),
+    var(--color-arrivals)
+  );
+}
+
+#map circle {
+  fill: var(--color);
+  fill-opacity: 0.6;
+  stroke: white;
+  stroke-width: 1;
+  pointer-events: auto;
+}
+
+#loading-message,
+#token-message {
+  position: absolute;
+  z-index: 2;
+  top: 1rem;
+  left: 50%;
+  max-width: min(34rem, calc(100% - 2rem));
+  transform: translateX(-50%);
+  padding: 0.75rem 1rem;
+  border: 1px solid #cfd8dc;
+  border-radius: 8px;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 2px 12px rgb(20 35 45 / 16%);
+  color: #27323a;
+  text-align: center;
+}
+
+#token-message code {
+  font-size: 0.9em;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-block: 1rem 0;
+  color: #313b44;
+}
+
+.legend > div {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.legend > div::before {
+  content: "";
+  display: inline-block;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid rgb(0 0 0 / 20%);
+  border-radius: 50%;
+  background: var(--color);
+}
+
+@media (max-width: 650px) {
+  #map {
+    min-height: 30rem;
+  }
+}
